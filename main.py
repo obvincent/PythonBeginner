@@ -1,41 +1,49 @@
-import time
-from turtle import Screen
-from player import Player
-from car_manager import CarManager
-from scoreboard import Scoreboard
+import colorgram
+from turtle import Turtle, Screen, pos
+import random
+"""colours = colorgram.extract("hirst-painting\dhimage.jpg", 25)
+colour_list = []
 
-#SetUp Scoreboard, Screen, and Player
-screen = Screen()
-screen.setup(width=600, height=600)
-screen.tracer(0)
+for colour in colours:
+    r = colour.rgb.r
+    g = colour.rgb.g
+    b = colour.rgb.b
+    new_colour = (r, g, b)
 
-player = Player()
-scoreboard = Scoreboard()
-cars = CarManager()
+    colour_list.append(new_colour)
 
-screen.listen()
-screen.onkey(player.move, "Up")
+print(colour_list)"""
 
-game_is_on = True
-while game_is_on:
+colour_list = [(199, 168, 94), (227, 239, 232), (129, 179, 191), (163, 58, 78), (234, 221, 121), (49, 113, 167), (241, 217, 222), (104, 87, 83), (143, 187, 119), (239, 245, 249), (216, 151, 171), (67, 125, 76), (94, 124, 180), (85, 165, 94), (190, 71, 90), (161, 34, 49), (142, 119, 116), (221, 173, 182), (175, 205, 174), (163, 202, 211), (204, 116, 48), (75, 60, 56), (67, 56, 52), (176, 190, 213)]
 
-    time.sleep(0.1)
-    screen.update()
+#10 * 10
+#Size 20, with 50 paces apart
+#Paint dots using colour palate we created.
+
+tony = Turtle()
+
+#TODO 1: Set up Tony's speed, pen, and position
+tony.speed("fastest")
+tony.pensize(201)
+tony.penup()
+
+my_screen = Screen()
+my_screen.colormode(255)
+
+#TODO 2: Print a dot, then moves 50 spaces forward. After 10 dots, move up a line.
+for lines in range(10):
+
+    tony.setpos(-250, -250 + 50*(lines))
     
-    #Generate and move the cars
-    cars.create_car()
-    cars.move_cars()
-    
-    #Detect if we were hit by the first car and stop the game if it happens
-    for car in cars.all_cars:
-        if car.distance(player) < 20:
-            scoreboard.game_over()
-            game_is_on = False
+    for dots in range (10):
+        tony.pendown()
+        tony.dot(25, random.choice(colour_list))
+        tony.penup()
+        tony.forward(50)
 
-    #Reset the Turtle when he makes it to the other side and update the scoreboard
-    if player.ycor() >= 300:
-        player.go_to_start()
-        scoreboard.update()
-        cars.increase_speed()
 
-screen.exitonclick()
+
+
+my_screen.exitonclick()
+
+#print(pos(tony))
