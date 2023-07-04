@@ -1,49 +1,60 @@
-import colorgram
-from turtle import Turtle, Screen, pos
-import random
-"""colours = colorgram.extract("hirst-painting\dhimage.jpg", 25)
-colour_list = []
+from turtle import Screen
+from turtle import Turtle
+from paddle import Paddle
+from ball import Ball
+import time
+from scoreboard import Scoreboard
 
-for colour in colours:
-    r = colour.rgb.r
-    g = colour.rgb.g
-    b = colour.rgb.b
-    new_colour = (r, g, b)
-
-    colour_list.append(new_colour)
-
-print(colour_list)"""
-
-colour_list = [(199, 168, 94), (227, 239, 232), (129, 179, 191), (163, 58, 78), (234, 221, 121), (49, 113, 167), (241, 217, 222), (104, 87, 83), (143, 187, 119), (239, 245, 249), (216, 151, 171), (67, 125, 76), (94, 124, 180), (85, 165, 94), (190, 71, 90), (161, 34, 49), (142, 119, 116), (221, 173, 182), (175, 205, 174), (163, 202, 211), (204, 116, 48), (75, 60, 56), (67, 56, 52), (176, 190, 213)]
-
-#10 * 10
-#Size 20, with 50 paces apart
-#Paint dots using colour palate we created.
-
-tony = Turtle()
-
-#TODO 1: Set up Tony's speed, pen, and position
-tony.speed("fastest")
-tony.pensize(201)
-tony.penup()
-
+ball_speed = 0.09
+#The Screen
 my_screen = Screen()
-my_screen.colormode(255)
+my_screen.setup(width = 800, height=600) 
+my_screen.bgcolor("black")
+my_screen.title("Pong")
+my_screen.tracer(0)
 
-#TODO 2: Print a dot, then moves 50 spaces forward. After 10 dots, move up a line.
-for lines in range(10):
+#The Paddles
+r_paddle = Paddle((350, 0))
+l_paddle = Paddle((-350, 0))
 
-    tony.setpos(-250, -250 + 50*(lines))
+my_screen.listen()
+my_screen.onkey(r_paddle.go_up, "Up")
+my_screen.onkey(l_paddle.go_up, "w")
+my_screen.onkey(r_paddle.go_down, "Down")
+my_screen.onkey(l_paddle.go_down, "s")
+
+#The Ball
+ball = Ball()
+scoreboard = Scoreboard()
+
+game_is_on = True
+while game_is_on:
+    time.sleep(ball_speed)
+    my_screen.update()
+    ball.move()
     
-    for dots in range (10):
-        tony.pendown()
-        tony.dot(25, random.choice(colour_list))
-        tony.penup()
-        tony.forward(50)
+    #Detect Collision with the wall
+    if ball.ycor()>= 280 or ball.ycor()<= -280:
+        ball.wall_bounce()
 
+    #Detect Collision with the paddles
+    if ball.xcor() == 330 and ball.distance(r_paddle) < 53.86 or (ball.xcor() == -330 and ball.distance(l_paddle) < 53.86):
+        ball.paddle_bounce()
+        ball_speed *= 0.80
+    
+    #Reset Ball and Score When Out of Bounds
+    if ball.xcor() == 390:
+        ball.reset_position()
+        scoreboard.l_point()
+        ball_speed = 0.09
 
+    elif ball.xcor() == -390:
+        ball.reset_position()
+        scoreboard.r_point()
+        ball_speed = 0.09
 
+    if scoreboard.r_score == 2 or scoreboard.l_score == 2:
+        game_is_on = False
+        scoreboard.game_over()
 
 my_screen.exitonclick()
-
-#print(pos(tony))
